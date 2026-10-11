@@ -27,20 +27,25 @@ def index():
                            samples=SAMPLE_BRIEFS)
 
 
-@app.route("/match", methods=["POST"])
+@app.route("/match", methods=["GET", "POST"])
 def match():
-    brief = core.clean_brief(request.form)
+    # GET so the results page survives refresh, back button and shared links.
+    if not request.values.get("product"):
+        return redirect(url_for("index"))
+    brief = core.clean_brief(request.values)
     results, ms = core.match(brief)
     return render_template("results.html", brief=brief, results=results, ms=ms,
                            total=len(core.load_creators()))
 
 
-@app.route("/shortlist/<creator_id>", methods=["POST"])
+@app.route("/shortlist/<creator_id>", methods=["GET", "POST"])
 def shortlist(creator_id):
     creator = core.get_creator(creator_id)
     if creator is None:
         abort(404)
-    brief = core.clean_brief(request.form)
+    if not request.values.get("product"):
+        return redirect(url_for("index"))
+    brief = core.clean_brief(request.values)
     return render_template("agreement.html", brief=brief, creator=creator,
                            concept=core.sample_concept(brief, creator),
                            agreement=core.agreement_text(brief, creator))

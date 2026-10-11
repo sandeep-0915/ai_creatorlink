@@ -39,7 +39,7 @@
       <span class="muted">&nbsp;Made with {{ r.concept.tools }}</span>
     </div>
 
-    <form method="post" action="{{ url_for('shortlist', creator_id=c.id) }}" style="margin-top:14px">
+    <form method="get" action="{{ url_for('shortlist', creator_id=c.id) }}" style="margin-top:14px">
       {{ brief_fields(brief) }}
       <button class="btn" type="submit">Shortlist and get agreement</button>
     </form>
