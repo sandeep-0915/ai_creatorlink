@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Creators</h1>
+<p class="lead">{{ creators | length }} AI creators. The first 10 are sample profiles for the demo.</p>
+
+{% if added %}<div class="note ok">Added {{ added }}. They now appear in matching.</div>{% endif %}
+{% if error %}<div class="note">{{ error }}</div>{% endif %}
+
+<div class="card">
+  <table>
+    <tr><th>Creator</th><th>Languages</th><th>Niches</th><th>Price (Rs)</th><th>Rights</th></tr>
+    {% for c in creators %}
+    <tr>
+      <td><b>{{ c.name }}</b><br><span class="muted">{{ c.city }}</span></td>
+      <td>{{ c.languages | join(', ') }}</td>
+      <td>{% for n in c.niches %}<span class="tag">{{ n }}</span>{% endfor %}</td>
+      <td>{{ '{:,}'.format(c.price_min) }} - {{ '{:,}'.format(c.price_max) }}</td>
+      <td><span class="badge">{{ c.licence }}</span><br><span class="muted">{{ c.tools | join(', ') }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<h2>Join as a creator</h2>
+<form class="card" method="post" action="{{ url_for('creators_new') }}">
+  <div class="row">
+    <div><label>Name</label><input name="name" required></div>
+    <div><label>City</label><input name="city"></div>
+  </div>
+  <label>Languages</label>
+  <div class="checks">{% for l in languages %}<label><input type="checkbox" name="languages" value="{{ l }}">{{ l }}</label>{% endfor %}</div>
+  <label>Niches</label>
+  <div class="checks">{% for n in niches %}<label><input type="checkbox" name="niches" value="{{ n }}">{{ n }}</label>{% endfor %}</div>
+  <div class="row">
+    <div><label>AI tools you use (comma separated)</label><input name="tools" placeholder="Midjourney, Runway"></div>
+    <div><label>Style in a few words</label><input name="style" placeholder="warm festive homely"></div>
+  </div>
+  <label>One-line bio</label><input name="bio">
+  <div class="row3">
+    <div><label>Min price (Rs)</label><input name="price_min" type="number" value="3000"></div>
+    <div><label>Max price (Rs)</label><input name="price_max" type="number" value="8000"></div>
+    <div><label>Delivery (days)</label><input name="delivery_days" type="number" value="5"></div>
+  </div>
+  <label>Usage rights you offer</label>
+  <input name="licence" placeholder="Full commercial use, 12 months, all digital">
+  <p><button class="btn" type="submit">Add my profile</button></p>
+</form>
+{% endblock %}

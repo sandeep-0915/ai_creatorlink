@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% macro brief_fields(b) %}
+  {% for k in ['brand', 'product', 'audience', 'tone', 'language', 'niche', 'budget'] %}
+    <input type="hidden" name="{{ k }}" value="{{ b[k] }}">
+  {% endfor %}
+{% endmacro %}
+
+{% block body %}
+<h1>Top matches for {{ brief.brand }}</h1>
+<p class="lead">{{ brief.product }} &middot; {{ brief.language }} &middot; {{ brief.niche }} &middot; Rs {{ '{:,}'.format(brief.budget) }}</p>
+<div class="note ok">Ranked {{ total }} creators in {{ ms }} ms. Cost of this match: Rs 0 (no API calls).</div>
+
+{% for r in results %}
+  {% set c = r.creator %}
+  <div class="card">
+    <div class="head">
+      <div>
+        <div class="rank">#{{ loop.index }} MATCH</div>
+        <div class="name">{{ c.name }}</div>
+        <div class="muted">{{ c.city }} &middot; {{ c.languages | join(', ') }}</div>
+        <div>{% for n in c.niches %}<span class="tag">{{ n }}</span>{% endfor %}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="score">{{ r.score }}%</div>
+        <div class="bar" style="margin-left:auto"><i style="width: {{ r.score }}%"></i></div>
+      </div>
+    </div>
+
+    <ul class="why">{% for why in r.reasons %}<li>{{ why }}</li>{% endfor %}</ul>
+
+    <div class="concept">
+      <b>Try before you hire</b> &middot; sample {{ r.concept.format }} ({{ r.concept.language }})
+      <div class="hook">{{ r.concept.hook }}</div>
+      <ul>{% for beat in r.concept.beats %}<li>{{ beat }}</li>{% endfor %}</ul>
+    </div>
+
+    <div>
+      <span class="badge">Rights: {{ c.licence }}</span>
+      <span class="muted">&nbsp;Made with {{ r.concept.tools }}</span>
+    </div>
+
+    <form method="post" action="{{ url_for('shortlist', creator_id=c.id) }}" style="margin-top:14px">
+      {{ brief_fields(brief) }}
+      <button class="btn" type="submit">Shortlist and get agreement</button>
+    </form>
+  </div>
+{% endfor %}
+
+<p><a class="btn ghost" href="{{ url_for('index') }}">Try another brief</a></p>
+{% endblock %}

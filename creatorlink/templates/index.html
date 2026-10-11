@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Rights-safe AI creators for small brands, in your language.</h1>
+<p class="lead">Post a brief, get your top 3 creators, and see a sample concept from each before you hire.</p>
+
+<div class="card">
+  <div class="muted"><b>Demo shortcut:</b> tap a sample brief to fill the form.</div>
+  <div class="chips">
+    {% for s in samples %}
+      <button type="button" class="chip" data-brief='{{ s | tojson }}'>{{ s.label }}</button>
+    {% endfor %}
+  </div>
+</div>
+
+<form class="card" method="post" action="{{ url_for('match') }}" id="brief-form">
+  <div class="row">
+    <div><label>Brand name</label><input name="brand" placeholder="Amma's Kitchen" required></div>
+    <div><label>Product</label><input name="product" placeholder="Mango Pickle" required></div>
+  </div>
+  <div class="row">
+    <div><label>Who is it for?</label><input name="audience" placeholder="families in Telangana"></div>
+    <div><label>Style or mood (a few words)</label><input name="tone" placeholder="warm festive homely"></div>
+  </div>
+  <div class="row3">
+    <div><label>Content language</label>
+      <select name="language">{% for l in languages %}<option>{{ l }}</option>{% endfor %}</select></div>
+    <div><label>Brand type</label>
+      <select name="niche">{% for n in niches %}<option>{{ n }}</option>{% endfor %}</select></div>
+    <div><label>Budget (Rs)</label><input name="budget" type="number" min="500" step="500" value="5000"></div>
+  </div>
+  <p><button class="btn" type="submit">Find my creators</button></p>
+</form>
+
+<script>
+  document.querySelectorAll('[data-brief]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = JSON.parse(b.getAttribute('data-brief'));
+      var f = document.getElementById('brief-form');
+      ['brand', 'product', 'audience', 'tone', 'language', 'niche', 'budget'].forEach(function (k) {
+        if (f.elements[k]) f.elements[k].value = d[k];
+      });
+    });
+  });
+</script>
+{% endblock %}

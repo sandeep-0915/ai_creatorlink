@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Shortlisted: {{ creator.name }}</h1>
+<p class="lead">{{ brief.brand }} &middot; {{ concept.format }} &middot; {{ concept.language }} &middot; delivery in {{ creator.delivery_days }} days</p>
+
+<div class="card">
+  <span class="badge">Rights: {{ creator.licence }}</span>
+  <span class="muted">&nbsp;Made with {{ concept.tools }}</span>
+  <div class="concept">
+    <b>Sample concept</b>
+    <div class="hook">{{ concept.hook }}</div>
+    <ul>{% for beat in concept.beats %}<li>{{ beat }}</li>{% endfor %}</ul>
+  </div>
+</div>
+
+<h2>Auto-generated usage agreement</h2>
+<pre class="agreement" id="agreement">{{ agreement }}</pre>
+
+<p class="noprint">
+  <button class="btn" type="button" onclick="window.print()">Print or save as PDF</button>
+  <button class="btn ghost" type="button" id="copy">Copy text</button>
+  <a class="btn ghost" href="{{ url_for('index') }}">New brief</a>
+</p>
+<script>
+  document.getElementById('copy').addEventListener('click', function () {
+    var t = document.getElementById('agreement').innerText;
+    if (navigator.clipboard) { navigator.clipboard.writeText(t); this.textContent = 'Copied'; }
+  });
+</script>
+{% endblock %}
